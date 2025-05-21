@@ -11,4 +11,14 @@ function getComputerChoice() {
   }
 }
 
-console.log(getComputerChoice());
+function getHumanChoice() {
+  let value = prompt(
+    'Pick a choice (either: Rock, Paper, or Scissors)',
+    'Rock'
+  );
+
+  // Strip whitespace and convert to lowercase
+  return value.trim().toLowerCase();
+}
+
+console.log(getHumanChoice());
