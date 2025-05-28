@@ -1,104 +1,102 @@
-function getComputerChoice() {
-  let value = Math.floor(Math.random() * 3) + 1;
+function getComputerChoice () {
+  const value = Math.floor(Math.random() * 3) + 1
   if (value === 1) {
-    return 'rock';
+    return 'rock'
   } else if (value === 2) {
-    return 'paper';
+    return 'paper'
   } else if (value === 3) {
-    return 'scissors';
+    return 'scissors'
   } else {
-    return 'Something went wrong';
+    return 'Something went wrong'
   }
 }
 
-function getHumanChoice() {
-  let value = prompt(
-    'Pick a choice (either: Rock, Paper, or Scissors)',
-    'Rock'
-  );
-
-  // Strip whitespace and convert to lowercase
-  return value.trim().toLowerCase();
-}
-
-function playRound(computerChoice, humanChoice) {
+function playRound (computerChoice, humanChoice) {
   if (humanChoice === 'rock' && computerChoice === 'paper') {
-    return 'lose';
+    return 'lose'
   } else if (humanChoice === 'rock' && computerChoice === 'scissors') {
-    return 'win';
+    return 'win'
   } else if (humanChoice === 'rock' && computerChoice === 'rock') {
-    return 'tie';
+    return 'tie'
   } else if (humanChoice === 'paper' && computerChoice === 'scissors') {
-    return 'lose';
+    return 'lose'
   } else if (humanChoice === 'paper' && computerChoice === 'rock') {
-    return 'win';
+    return 'win'
   } else if (humanChoice === 'paper' && computerChoice === 'paper') {
-    return 'tie';
+    return 'tie'
   } else if (humanChoice === 'scissors' && computerChoice === 'rock') {
-    return 'lose';
+    return 'lose'
   } else if (humanChoice === 'scissors' && computerChoice === 'paper') {
-    return 'win';
+    return 'win'
   } else if (humanChoice === 'scissors' && computerChoice === 'scissors') {
-    return 'tie';
+    return 'tie'
   } else {
-    return 'Invalid choice. Please choose Rock, Paper, or Scissors.';
+    return 'Invalid choice. Please choose Rock, Paper, or Scissors.'
   }
 }
 
-function playGame() {
-  let humanScore = 0;
-  let computerScore = 0;
-  let roundsPlayed = 0;
+let humanScore = 0
+let computerScore = 0
+let roundCount = 0
+const TOTAL_ROUNDS = 5
 
-  // Play 5 rounds
-  while (roundsPlayed < 5) {
-    let computerChoice = getComputerChoice();
-    let humanChoice = getHumanChoice();
+function handleClick (playerChoice) {
+  if (roundCount >= TOTAL_ROUNDS) return // Prevent further play after 5 rounds
 
-    let result = playRound(computerChoice, humanChoice);
+  const computerChoice = getComputerChoice()
+  const result = playRound(computerChoice, playerChoice)
 
-    // Create a message based on the result
-    let message = '';
-    if (result === 'win') {
-      humanScore++;
-      message = `Your Choice: ${humanChoice}, Computer choice: ${computerChoice} --> You win!`;
-    } else if (result === 'lose') {
-      computerScore++;
-      message = `Your Choice: ${humanChoice}, Computer choice: ${computerChoice} --> You lose!`;
-    } else if (result === 'tie') {
-      message = `Your Choice: ${humanChoice}, Computer choice: ${computerChoice} --> It's a tie!`;
+  const roundResult = document.getElementById('round-result')
+  const scoreDisplay = document.getElementById('score')
+  const gameWinner = document.getElementById('game-winner')
+
+  roundCount++ // Increment round count for every play (win, lose or tie)
+
+  if (result === 'win') {
+    humanScore++
+    roundResult.textContent = `Round ${roundCount}: You win this round! ${playerChoice} beats ${computerChoice}.`
+  } else if (result === 'lose') {
+    computerScore++
+    roundResult.textContent = `Round ${roundCount}: You lose this round! ${computerChoice} beats ${playerChoice}.`
+  } else {
+    roundResult.textContent = `Round ${roundCount}: It's a tie! You both chose ${playerChoice}.`
+  }
+
+  scoreDisplay.textContent = `👨‍💻 You: ${humanScore} || 🖥️ Computer: ${computerScore}`
+
+  if (roundCount === TOTAL_ROUNDS) {
+    if (humanScore > computerScore) {
+      gameWinner.textContent = '🎉 You won the game!'
+    } else if (computerScore > humanScore) {
+      gameWinner.textContent = '💻 Computer wins the game!'
     } else {
-      message = result; // For invalid choices
-      continue; // Don't count invalid rounds
+      gameWinner.textContent = '🤝 The game ended in a tie!'
     }
-
-    // Display the message and current score
-    console.log(message);
-    console.log(
-      `Current Score - You: ${humanScore}, Computer: ${computerScore}`
-    );
-
-    roundsPlayed++;
-  }
-
-  // After the loop, compare scores and display winner
-  console.log(`Final Score - You: ${humanScore}, Computer: ${computerScore}`);
-
-  if (humanScore > computerScore) {
-    console.log('You won the game!');
-  } else if (computerScore > humanScore) {
-    console.log('Computer wins the game!');
-  } else {
-    console.log('The game ended in a tie!');
-  }
-
-  // Ask to play again
-  let playAgain = confirm('Do you want to play again?');
-  if (playAgain) {
-    playGame(); // Restart the game
-  } else {
-    console.log('Thanks for playing!');
   }
 }
 
-playGame();
+// Attach listeners to buttons
+document
+  .getElementById('rock')
+  .addEventListener('click', () => handleClick('rock'))
+document
+  .getElementById('paper')
+  .addEventListener('click', () => handleClick('paper'))
+document
+  .getElementById('scissors')
+  .addEventListener('click', () => handleClick('scissors'))
+
+// Replaying the game
+function resetGame () {
+  humanScore = 0
+  computerScore = 0
+  roundCount = 0
+
+  // Reset UI elements
+  document.getElementById('round-result').textContent = ''
+  document.getElementById('score').textContent = '👨‍💻 You: 0 || 🖥️ Computer: 0'
+  document.getElementById('game-winner').textContent = ''
+}
+
+// Add event listener for replay button
+document.getElementById('replay').addEventListener('click', resetGame)
